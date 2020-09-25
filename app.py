@@ -2,6 +2,16 @@ import streamlit as st
 from PIL import Image
 import pandas as pd
 
+import yfinance as yf
+import matplotlib.pyplot as plt
+import os
+
+import datetime
+from pandas_datareader import data as pdr
+
+import pymongo
+from pymongo import MongoClient
+
 #adding a title and an image
 st.write("""
 # Stock Market Application
@@ -97,8 +107,40 @@ st.header(company_name+" Volume\n")
 st.line_chart(df['Volume'])
 
 #get statistics 
-st.header('Data Statistics')
-st.write(df.describe())
+#st.header('Data Statistics')
+#st.write(df.describe())
 
+#get model
+st.header('Model LSTM')
+start_sp = datetime.datetime(2010, 1, 1)
+end_sp = datetime.datetime(2020, 9, 24)
+
+yf.pdr_override() # <== that's all it takes :-)
+GOOD = pdr.get_data_yahoo('GOOG', start_sp, end_sp)
+    
+GOOD.head()
+
+#using mongodb
+myclient = MongoClient("mongodb://localhost:27017/")
+mydb = myclient["Stocks"]
+mycol = mydb["Tickers"]
+
+myclient = MongoClient("mongodb://localhost:27017/")
+mydb = myclient["Stocks"]
+mycol = mydb["Tickers"]
+
+# Step 2: Insert Data into DB
+#GOOG.reset_index(inplace=True) # Reset Index
+#data_dict = GOOG.to_dict("records") # Convert to dictionary
+#mycol.insert_one({"Index":"GOOG","data":data_dict}) # inesrt into DB
+
+# Step 3: Get data from DB
+#st.sidebar.header('User Imput')
+
+#funtion to get the users input
+#def get_input():
+    #data_from_db = mycol.find_one({"symbol":"GOOG"})
+    #GOOG = pd.DataFrame(data_from_db["data"])
+    #GOOG.set_index("Date",inplace=True)
 
 
